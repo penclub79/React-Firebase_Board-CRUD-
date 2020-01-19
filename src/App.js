@@ -57,6 +57,8 @@ function App() {
   const [newName, setNewName] = useState(); // 시설이름 변수
 
   const [isButton, setIsButton] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  
   
   useEffect(() => {
     
@@ -83,9 +85,14 @@ function App() {
     const database = firebase.database().ref('/').once('value');
     database.then(res => {
       setListData(res.val().board_list);
-      setUserId(res.val().board_list.length);
+      const listdata = res.val().board_list;
+      if (listdata) {
+        setUserId(listdata.length);   // userId값 부여
+        return false;
+      }
     });
     setIsButton(false);
+    setIsLoading(false);
     setNewName('');
   };
 
@@ -138,8 +145,8 @@ function App() {
           <span>ID</span>
           <span>시설</span>
         </TableBodyInBox>
-          {
-            listData ?
+        {
+            listData &&
             (
               listData.map((list) => (
                 <TableBox key={list.uid}
@@ -150,10 +157,12 @@ function App() {
                </TableBox>
               ))
             )
-                :
-            (
-              <div>데이터를 불러오는 중입니다.</div>
-            )
+          }
+          {
+            isLoading &&
+              (
+                <div>데이터를 불러오는 중입니다.</div>
+              )            
           }
       </TableBody>
       <span style={{marginRight: "10px"}}>시설 이름</span>
