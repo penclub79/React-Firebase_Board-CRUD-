@@ -4,135 +4,131 @@ import styled from "styled-components";
 
 const Wrapper = styled.div`
   width: 1000px;
-  border: 1px solid red;
   text-align: center;
 `;
 
 const Title = styled.div`
-  margin-top: 100px;
+  margin-top: 60px;
   display: inline-block;
   width: 350px;
-  border: 1px solid blue;
+  font-size: 30px;
 `;
 
 const TableBody = styled.div`
   margin-top: 100px;
-  height: 300px;
-  border : 1px solid green;
+  margin-bottom: 60px;
+  max-height: 300px;
+  height: auto;
+  overflow: auto;
 `;
 
 const TableBodyInBox = styled.div`
   display: flex;
   justify-content: space-around;
+  margin-bottom: 30px;
 `;
 
 const TableBox = styled.div`
   display: flex;
+  cursor: pointer;
   justify-content: space-around;
+  border: 2px solid gray;
+  height: 30px;
+  line-height: 30px;
+  margin: 10px;
 `
 
 const InputBox = styled.input`
   width: 150px;
   height: 20px;
-  margin: 0 50px 50px 0;
+  margin-bottom: 50px;
 `;
 
 const ButtonBox = styled.button`
   width: 100px;
   height: 50px;
-  margin-bottom: 100px;
+  margin-bottom: 50px;
 `;
 
 function App() {
   const [userInfo, setUserInfo] = useState(); // 인증시 필요한 유저정보담는 변수 
+  const [userId, setUserId] = useState(0); // id 부여
+  const [listData, setListData] = useState(); 
   const [newName, setNewName] = useState([]); // 시설이름 변수
+
+  const [isButton, setIsButton] = useState(false);
   
   useEffect(() => {
     
-    const fetchData = async () => {
+    const fetchData = () => {
       const auth = firebase.auth();
-      // const db = firebase.firestore();
-      const db = firebase.database();
-      // const docRef = db.collection("board_list").doc("test");
       const authProvider = new firebase.auth.GoogleAuthProvider();
       
       auth.onAuthStateChanged((user) => { // Auth
         if (user) {
           // 인증 성공부
           console.log("success");
-          console.log(user);
           // 보더리스트 출력
           setUserInfo(user);  
-          // getBoardList(user);
-          getBoardList();
         } else {
           // 인증 실패부
           auth.signInWithPopup(authProvider);
         }
       });
-      
-      // const getBoardList = (userInfo) => { // 목록가져오기
-        const getBoardList = () => {
-          const userId = firebase.auth().currentUser.uid;
-          return firebase.database().ref('board_list/'+userId).once('value').then((snapshot) => {
-            const name = (snapshot.val() && snapshot.val().name) || 'Anonymous';
-            console.log('aaaaaaaaaa',name);
-          });
-        // console.log(userInfo.uid);
-        // console.log(db);
-        // const boardRef = db.ref('board_list/', userInfo.uid);
-        // console.log(boardRef);
-        // boardRef.on('child_added', (data) => {
-        //   console.log("database 접근");
-        //   console.log(data);
-        // });
-      }
     }
-
-    
+    getBoardList();
     fetchData();
-    // createNewData(0, "야구장");
-    
   }, []);
-  
-  const createNewData = (placeName) => {  // 저장
-    // const postData = {
-    //   uid: uid,
-    // };
-    const newKey = firebase.database().ref().child('board_list').push().key;
-    firebase.database().ref('board_list/' + placeName).set({
-      id: 1,
-      uid: newKey, 
-      placeName: placeName,
+
+  const getBoardList = () => { // get List
+    const database = firebase.database().ref('/').once('value');
+    database.then(res => {
+      setListData(res.val().board_list);
+      setUserId(res.val().board_list.length);
     });
-    console.log("저장 성공 ~ !");
+    setIsButton(false);
   };
 
-  const updateData = () => {   // 수정
-    // const newPostKey = firebase.database().ref().child('posts').push().key;
-    
-    // const updates = {};
-    // updates['/posts/' + newPostKey] = postData;
-    // updates['/user-posts/' + uid + '/' + newPostKey] = postData;
-
-    // return firebase.database().ref().update(updates);
+  const getOneData = (id) => {   // get data
+    setIsButton(true);
+    setUserId(id);
+    const rootRef = firebase.database().ref();
+    rootRef.child("board_list").child(id).child("placeName").once('value', (data) => {
+      setNewName(data.val());
+    });
+  }
+  
+  const createNewData = (placeName) => {  // save
+    const newKey = firebase.database().ref().child('board_list').push().key;
+    firebase.database().ref('board_list/' + userId).set({
+      id: userId,
+      uid: newKey,
+      placeName: placeName,
+    }, () => setUserId(userId + 1));
+    getBoardList();
   };
 
-  const deleteData = () => {  // 삭제
+  const updateData = (updateName, id) => {   // update
+    const rootRef = firebase.database().ref();
+    rootRef.child("board_list").child(id).update({
+      placeName: updateName,
+    });
+    setIsButton(false);
+    getBoardList();
+  };
 
+  const deleteData = (id) => {  // delete
+    console.log("삭제");
+    const rootRef = firebase.database().ref();
+    rootRef.child("board_list").child(id).remove();
+    console.log("삭제 완료");
+    setIsButton(false);
+    getBoardList();
   };
 
   const onChange = (e) => {
     setNewName(e);
   }
-
-  // const onCreate = () => {
-  // //  const db = firebase.firestore();
-  // const db = firebase;
-  // //  console.log(db);
-  // //  db.collection("board_list").add({ name: newName});
-  //   console.log("collection~~~~",db);
-  // };
 
   return (
     <Wrapper>
@@ -144,20 +140,72 @@ function App() {
           <span>ID</span>
           <span>시설</span>
         </TableBodyInBox>
-        <TableBox>
-          <span>uid</span>
-          <span>name</span>
-        </TableBox>
+          {
+            listData ?
+            (
+              console.log(listData),
+              listData.map((list) => (
+                <TableBox key={list.uid}
+                  onClick={() => {getOneData(list.id)}}
+                >
+                 <span>{list.uid}</span>
+                 <span>{list.placeName}</span>
+               </TableBox>
+              ))
+            )
+                :
+            (
+              <div>데이터를 불러오는 중입니다.</div>
+            )
+          }
       </TableBody>
-      <span>시설이름</span>
+      <span style={{marginRight: "10px"}}>시설 이름</span>
       <InputBox
         value={newName}
         onChange={e => onChange(e.target.value)}
         name="place"
       />
-      <div>
-        <ButtonBox onClick={() => createNewData(newName)}>저장</ButtonBox>
-      </div>
+      {
+        isButton ?
+        (
+          <div>
+            <button
+              style={{
+                width: "100px",
+                height: "50px"
+              }}
+              onClick={() => getBoardList()}
+            >취소
+            </button>
+
+            <button
+              style={{
+                margin: "10px",
+                width: "100px",
+                height: "50px"
+              }}
+              onClick={() => updateData(newName, userId)}
+            >수정
+            </button>
+            
+            <button
+              style={{
+                width: "100px",
+                height: "50px"
+              }}
+              onClick={() => deleteData(userId)}
+            >삭제
+            </button>
+          </div>
+        )
+          :
+        (
+          <div>
+            <ButtonBox onClick={() => createNewData(newName)}>저장</ButtonBox>
+          </div> 
+        )
+      }
+      
     </Wrapper>
   );
 }

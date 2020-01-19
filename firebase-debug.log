@@ -1,0 +1,29 @@
+[debug] [2020-01-18T21:52:23.894Z] ----------------------------------------------------------------------
+[debug] [2020-01-18T21:52:23.901Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\pencl\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js serve
+[debug] [2020-01-18T21:52:23.902Z] CLI Version:   7.12.1
+[debug] [2020-01-18T21:52:23.902Z] Platform:      win32
+[debug] [2020-01-18T21:52:23.902Z] Node Version:  v10.15.3
+[debug] [2020-01-18T21:52:23.911Z] Time:          Sun Jan 19 2020 06:52:23 GMT+0900 (GMT+09:00)
+[debug] [2020-01-18T21:52:23.911Z] ----------------------------------------------------------------------
+[debug] [2020-01-18T21:52:23.911Z] 
+[debug] [2020-01-18T21:52:23.949Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2020-01-18T21:52:23.952Z] > authorizing via signed-in user
+[debug] [2020-01-18T21:52:23.952Z] [iam] checking project board-451e3 for permissions ["firebase.projects.get"]
+[debug] [2020-01-18T21:52:23.959Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2020-01-18T21:52:23.959Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2020-01-18T21:52:24.449Z] <<< HTTP RESPONSE 200
+[debug] [2020-01-18T21:52:24.468Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/board-451e3:testIamPermissions  
+
+[debug] [2020-01-18T21:52:25.502Z] <<< HTTP RESPONSE 200
+[debug] [2020-01-18T21:52:25.506Z] >>> HTTP REQUEST GET https://firebase.googleapis.com/v1beta1/projects/board-451e3  
+ 
+[debug] [2020-01-18T21:52:26.471Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Serving from 'C:\Users\pencl\Desktop\board-firebase'...
+[info] 
+[debug] [2020-01-18T21:52:26.486Z] >>> HTTP REQUEST GET https://firebase.googleapis.com/v1beta1/projects/board-451e3/webApps/-/config  
+ 
+[debug] [2020-01-18T21:52:27.933Z] <<< HTTP RESPONSE 200
+[info] i  hosting: Serving hosting files from: build
+[info] +  hosting: Local server: http://localhost:5000
