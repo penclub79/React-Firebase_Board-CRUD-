@@ -69,7 +69,6 @@ function App() {
           // 인증 성공부
           console.log("success");
           // 보더리스트 출력
-          setUserInfo(user);  
         } else {
           // 인증 실패부
           auth.signInWithPopup(authProvider);
@@ -87,6 +86,7 @@ function App() {
       setUserId(res.val().board_list.length);
     });
     setIsButton(false);
+    setNewName('');
   };
 
   const getOneData = (id) => {   // get data
