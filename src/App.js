@@ -51,7 +51,7 @@ const ButtonBox = styled.button`
 `;
 
 function App() {
-  
+  // firebase - realtime version  
   const [userId, setUserId] = useState(0); // id 부여
   const [listData, setListData] = useState(); // firebase DB 담기
   const [newName, setNewName] = useState(); // 시설이름 변수
