@@ -51,9 +51,9 @@ const ButtonBox = styled.button`
 `;
 
 function App() {
-  const [userInfo, setUserInfo] = useState(); // 인증시 필요한 유저정보담는 변수 
+  
   const [userId, setUserId] = useState(0); // id 부여
-  const [listData, setListData] = useState(); 
+  const [listData, setListData] = useState(); // firebase DB 담기
   const [newName, setNewName] = useState([]); // 시설이름 변수
 
   const [isButton, setIsButton] = useState(false);
@@ -118,10 +118,8 @@ function App() {
   };
 
   const deleteData = (id) => {  // delete
-    console.log("삭제");
     const rootRef = firebase.database().ref();
     rootRef.child("board_list").child(id).remove();
-    console.log("삭제 완료");
     setIsButton(false);
     getBoardList();
   };
@@ -143,7 +141,6 @@ function App() {
           {
             listData ?
             (
-              console.log(listData),
               listData.map((list) => (
                 <TableBox key={list.uid}
                   onClick={() => {getOneData(list.id)}}
